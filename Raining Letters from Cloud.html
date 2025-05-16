@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Raining Letters with Wider Bottom Cloud</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .cloud {
+    position: relative;
+    width: 180px;
+    height: 100px;
+    filter: drop-shadow(0 0 10px #ff6680);
+  }
+
+  .cloud .circle1 {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: #ff6680;
+    border-radius: 50%;
+    top: 0;
+    left: 40px;
+  }
+
+  .cloud .circle2 {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: #ff6680;
+    border-radius: 50%;
+    top: 10px;
+    left: 110px;
+  }
+
+  .cloud .circle3 {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: #ff6680;
+    border-radius: 50%;
+    top: 30px;
+    left: 0;
+  }
+
+  /* Wider bottom oval */
+  .cloud .oval {
+    position: absolute;
+    width: 220px;      /* wider */
+    height: 60px;
+    background: #ff6680;
+    border-radius: 50% / 100%;
+    top: 40px;
+    left: -20px;       /* adjusted */
+  }
+
+  canvas {
+    position: absolute;
+    top: 140px; /* Below the cloud */
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+  <div class="cloud">
+    <div class="circle1"></div>
+    <div class="circle2"></div>
+    <div class="circle3"></div>
+    <div class="oval"></div>
+  </div>
+
+  <canvas id="rain"></canvas>
+
+<script>
+  const canvas = document.getElementById('rain');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = 200;
+  canvas.height = 400;
+
+  const letters = ['$', '@', '#', '%', '&', '*', '!', '?', '+', '-', '=', '~', '§', '£', '€', '¢', '¥'];
+  const fontSize = 20;
+  const rainDrops = [];
+
+  for (let i = 0; i < 80; i++) {
+    rainDrops.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      speed: 1 + Math.random() * 2,
+      char: letters[Math.floor(Math.random() * letters.length)],
+      opacity: Math.random()
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = fontSize + 'px monospace';
+    ctx.fillStyle = '#ff6680';
+
+    rainDrops.forEach(drop => {
+      ctx.globalAlpha = drop.opacity;
+      ctx.fillText(drop.char, drop.x, drop.y);
+      drop.y += drop.speed;
+      drop.opacity -= 0.005;
+
+      if (drop.y > canvas.height || drop.opacity <= 0) {
+        drop.x = Math.random() * canvas.width;
+        drop.y = 0;
+        drop.char = letters[Math.floor(Math.random() * letters.length)];
+        drop.speed = 1 + Math.random() * 2;
+        drop.opacity = 1;
+      }
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>
